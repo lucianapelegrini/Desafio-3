@@ -166,7 +166,7 @@ app.post('/itemcompra/:id', async (req, res) => {
     });
 });
 
-app.post('/podutos', async (req, res) => {
+app.put('/produtos', async (req, res) => {
     await produto.create(
         req.body
     ).then(function (){
@@ -181,7 +181,6 @@ app.post('/podutos', async (req, res) => {
         });
     });
 });
-
 
 app.post('/pedidos', async(req, res) =>{
     await pedido.create(
@@ -249,6 +248,51 @@ app.get('/listaservicos/:id', async (req, res) => {
     });
 });
 
+app.get('/listaitempedido', async(req, res)=>{
+    await itempedido.findAll({
+        order:[['nome', 'ASC']]
+    }).then(function(itempedido){
+        res.json({itempedido})
+    }).catch(function (erro) { 
+        return res.status(400).json({
+            error: true,
+            message: 'Impossivel executar!'
+        });
+    });
+});
+
+app.get('/listaitempedido/:id', async (req, res) => { 
+    if (!await itempedido.findByPk(req.params.id)) {
+        return res.status(400).json({
+            error: true,
+            message: 'Servico não localizado!'
+        });
+    }
+    await itempedido.findByPk(req.params.id).then(ped => {
+        return res.json({
+            error: false,
+            serv
+        })
+    });
+});
+
+app.get('/listacompras', async(req, res)=>{
+    await compra.findAll({
+        order: [['id', 'DESC']],
+        include: [{ all: true }]
+    }).then(function(clientes){
+        res.json({
+            error: false,
+            clientes
+        })
+    }).catch(function (erro){
+        return res.status(400).json({
+            error: true,
+            message: "Impossivel executar"
+        });
+    });
+});
+
 app.get('/listacompra/:id', async (req, res) => { 
     if (!await compra.findByPk(req.params.id)) {
         return res.status(400).json({
@@ -265,23 +309,6 @@ app.get('/listacompra/:id', async (req, res) => {
                 message: 'Erro: não foi possível conectar!',
             });
         });
-});
-
-
-app.get('/listacliente', async(req, res)=>{
-    await cliente.findAll({
-        raw: true
-    }).then(function(clientes){
-        res.json({
-            error: false,
-            clientes
-        });
-    }).catch(function (erro) {
-        return res.status(400).jsom({
-            error: true,
-            message: "Não foi possivel executar"
-        });
-    })
 });
 
 app.get('/listapedido', async(req, res)=>{
@@ -301,21 +328,38 @@ app.get('/listapedido', async(req, res)=>{
     });
 });
 
-app.get('/listacompras', async(req, res)=>{
-    await compra.findAll({
-        order: [['id', 'DESC']],
-        include: [{ all: true }]
+app.get('/listapedido/:id', async (req, res) => { 
+    if (!await pedido.findByPk(req.params.id)) {
+        return res.status(400).json({
+            error: true,
+            message: 'Compra não executada!'
+        });
+    }
+    await pedido.findByPk(req.params.id, { include: [{ all: true }] })
+        .then(ped => {
+            return res.json({ ped });
+        }).catch(function (erro) {
+            return res.status(400).json({
+                error: true,
+                message: 'Erro: não foi possível conectar!',
+            });
+        });
+});
+
+app.get('/listacliente', async(req, res)=>{
+    await cliente.findAll({
+        raw: true
     }).then(function(clientes){
         res.json({
             error: false,
             clientes
-        })
-    }).catch(function (erro){
-        return res.status(400).json({
-            error: true,
-            message: "Impossivel executar"
         });
-    });
+    }).catch(function (erro) {
+        return res.status(400).jsom({
+            error: true,
+            message: "Não foi possivel executar"
+        });
+    })
 });
 
 app.get('/listacliente/:id', async (req, res) => { 
@@ -382,8 +426,7 @@ app.get('/pedido/:id', async (req, res) => {
 });
 
 app.get('/compra/:id', async (req, res) => { 
-
-    await compra.findByPk(req.params.id, { include: {all: tru}})
+    await compra.findByPk(req.params.id, {include: {all: tru}})
         .then(ped => {
             return res.json({ped});
         }).catch(function (erro) {
@@ -749,7 +792,7 @@ app.delete('/excluiritempedido/:id', async (req, res) => {
         });
     };
 
-    await itemPedido.destroy({
+    await itempedido.destroy({
         where: Sequelize.and({ PedidoId: req.params.id },
             { ServicoId: req.body.ServicoId })
     }).then(function () {

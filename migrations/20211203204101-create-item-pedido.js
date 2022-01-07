@@ -10,9 +10,8 @@ module.exports = {
           model: 'Pedido',
           key: 'id'
         },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
-        
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       ServicoId: {
         allowNull: false,
@@ -22,9 +21,8 @@ module.exports = {
           model: 'Servico',
           key: 'id'
         },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
-        
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
       },
       quantidade: {
         type: Sequelize.INTEGER
@@ -44,5 +42,5 @@ module.exports = {
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('ItemPedido');
-  }
+  },
 };
