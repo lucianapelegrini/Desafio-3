@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       Compra.belongsToMany(models.Produto, {foreignKey: 'CompraId', through: 'ItemCompra', as: 'CompraProd'});
       Compra.hasMany(models.ItemCompra, {foreignKey: 'CompraId', as: 'item_Compra'});
     }
-
   };
   Compra.init({
     data: DataTypes.DATEONLY,

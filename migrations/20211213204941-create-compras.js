@@ -11,7 +11,7 @@ module.exports = {
       data: {
         type: Sequelize.DATEONLY
       },
-
+      
       ClienteId: {
         allowNull: false,
         type: Sequelize.INTEGER,
